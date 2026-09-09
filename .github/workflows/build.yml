@@ -115,7 +115,8 @@ jobs:
         shell: pwsh
         run: |
           dotnet tool install --global wix --version 6.*
-          wix extension add -g WixToolset.UI.wixext/6.*
+          $wixVersion = (wix --version)
+          wix extension add -g "WixToolset.UI.wixext/$wixVersion"
 
       - name: Build MSI
         shell: pwsh
