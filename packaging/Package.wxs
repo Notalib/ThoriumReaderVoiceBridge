@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <!-- StageDir is passed by CI (wix build -d StageDir=...) and holds the signed payload. -->
+  <?ifndef StageDir ?>
+  <?define StageDir = "..\artifacts\stage" ?>
+  <?endif?>
+
+  <!-- MSI ProductVersion only accepts major.minor.build, so it cannot be bound to the 4-part file version. -->
+  <?ifndef Version ?>
+  <?define Version = "0.0.0" ?>
+  <?endif?>
+
+  <Package Name="Tilføj stemmer til Thorium"
+           Manufacturer="Det Kgl. Bibliotek – Nota-service"
+           Version="$(Version)"
+           UpgradeCode="418D1F9F-2F1F-477F-8F98-2EF718CC86CA"
+           Scope="perMachine"
+           Compressed="yes"
+           Language="1033">
+
+    <SummaryInformation Description="Flytter SAPI-oplæsningsstemmer til Windows OneCore, så Thorium Reader kan bruge dem." />
+
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="En nyere version af [ProductName] er allerede installeret." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="AppIcon.ico" SourceFile="$(StageDir)\KB_icon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="Tilføj stemmer til Thorium" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder" />
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="LauncherExeComponent">
+        <File Id="LauncherExe" Source="$(StageDir)\ThoriumVoiceBridge.exe" KeyPath="yes" />
+        <Shortcut Id="StartMenuShortcut"
+                  Directory="ProgramMenuFolder"
+                  Name="Tilføj stemmer til Thorium"
+                  Description="Gør SAPI-oplæsningsstemmer tilgængelige i Thorium Reader"
+                  Icon="AppIcon.ico"
+                  Advertise="no" />
+      </Component>
+
+      <Component Id="ScriptComponent">
+        <File Id="AppScript" Source="$(StageDir)\ThoriumVoiceBridge.ps1" KeyPath="yes" />
+      </Component>
+
+      <Component Id="IconComponent">
+        <File Id="AppIconFile" Source="$(StageDir)\KB_icon.ico" KeyPath="yes" />
+      </Component>
+
+      <Component Id="LogoComponent">
+        <File Id="AppLogoFile" Source="$(StageDir)\KB_logo.png" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <Feature Id="Main" Title="Tilføj stemmer til Thorium" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+    </Feature>
+
+    <ui:WixUI Id="WixUI_Minimal" />
+
+  </Package>
+</Wix>

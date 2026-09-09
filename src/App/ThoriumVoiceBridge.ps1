@@ -349,7 +349,7 @@ $form.StartPosition = "CenterScreen"
 
 #-------------Program-ikon--------------
 $baseDir  = if ($PSScriptRoot) { $PSScriptRoot } elseif ($PSCommandPath) { Split-Path -Parent $PSCommandPath } else { (Get-Location).Path }
-$iconPath = Join-Path $baseDir "KB_ikon.ico"
+$iconPath = Join-Path $baseDir "KB_icon.ico"
 
 $form.ShowIcon = $true
 $form.ShowInTaskbar = $true
@@ -383,7 +383,7 @@ $lblTop.Font = New-Object System.Drawing.Font("Segoe UI", 9, [System.Drawing.Fon
 $form.Controls.Add($lblTop)
 
 # Logo (øverst til højre)
-$logoPath = Join-Path (Split-Path -Parent $PSCommandPath) "KB_logo.png"
+$logoPath = Join-Path $baseDir "KB_logo.png"
 $picLogo = New-Object System.Windows.Forms.PictureBox
 $picLogo.Location = New-Object System.Drawing.Point(770, 15)
 $picLogo.Size = New-Object System.Drawing.Size(190, 55)

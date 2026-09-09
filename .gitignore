@@ -1,0 +1,12 @@
+artifacts/
+bin/
+obj/
+*.user
+*.suo
+
+# Build output that must never be committed
+*.msi
+*.wixpdb
+
+.DS_Store
+Thumbs.db
