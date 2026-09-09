@@ -79,6 +79,12 @@ with the account details in [signing/metadata.json](signing/metadata.json). The 
 signed before the MSI is built so its signature is embedded in the package; the MSI is then
 signed as a whole.
 
+### Manual Signing
+For a manual Windows build using Azure CLI authentication, see
+[docs/manual-windows-signing.md](docs/manual-windows-signing.md).
+
+### Automated Workflow
+
 Authentication is OpenID Connect, so no secret values are stored in the repository. The
 following repository secrets must point at an app registration with a federated credential
 for this repo and the **Certificate Profile Signer** role on the signing account:
