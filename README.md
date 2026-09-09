@@ -21,8 +21,8 @@ Because it writes to `HKLM`, the app requires administrator rights.
 
 | Path | Contents |
 | --- | --- |
-| `src/Launcher.Core/` | Platform-neutral voice bridge service and registry abstraction |
-| `src/Launcher/` | Native .NET 10 WinForms application, Windows registry adapter, and image assets |
+| `src/ThoriumVoiceBridge.Core/` | Platform-neutral voice bridge service and registry abstraction |
+| `src/ThoriumVoiceBridge/` | Native .NET 10 WinForms application, Windows registry adapter, and image assets |
 | `signing/` | Azure Artifact Signing (formerly Trusted Signing) account metadata |
 | `.github/workflows/` | CI: build, sign, and release the executable |
 
@@ -39,7 +39,7 @@ from macOS or Linux with `EnableWindowsTargeting`; the resulting app runs on Win
 
 ```powershell
 dotnet test ThoriumVoiceBridge.slnx
-dotnet publish src/Launcher/Launcher.csproj -c Release -r win-x64 --self-contained true
+dotnet publish src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj -c Release -r win-x64 --self-contained true
 ```
 
 The native app uses a manifest to request administrator rights before opening the
@@ -50,7 +50,7 @@ machine-wide voice registry.
 Every push to `main` builds, signs and uploads the executable as a workflow artifact.
 
 To publish a release, bump `<Version>` in
-[src/Launcher/Launcher.csproj](src/Launcher/Launcher.csproj), update
+[src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj](src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj), update
 [CHANGELOG.md](CHANGELOG.md), merge to `main`, then run the **Build** workflow manually
 with **Create a GitHub Release** enabled. The version in the csproj is the single source
 of truth — it drives the EXE file version, artifact name, and release tag.

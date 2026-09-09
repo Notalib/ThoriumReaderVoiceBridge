@@ -33,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Launcher.Core\Launcher.Core.csproj" />
+    <ProjectReference Include="..\ThoriumVoiceBridge.Core\ThoriumVoiceBridge.Core.csproj" />
     <EmbeddedResource Include="Assets\KB_icon.ico" LogicalName="KB_icon.ico" />
     <EmbeddedResource Include="Assets\KB_logo.png" LogicalName="KB_logo.png" />
   </ItemGroup>

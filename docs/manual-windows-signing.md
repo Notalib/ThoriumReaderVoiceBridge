@@ -57,9 +57,9 @@ The launcher project version is the source of truth for the executable version
 and output filename.
 
 ```powershell
-$csproj = [xml](Get-Content src/Launcher/Launcher.csproj)
+$csproj = [xml](Get-Content src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj)
 $version = $csproj.Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
-if (-not $version) { throw "No <Version> found in src/Launcher/Launcher.csproj" }
+if (-not $version) { throw "No <Version> found in src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj" }
 
 Write-Host "Building version $version"
 ```
@@ -69,7 +69,7 @@ Run tests, then publish the self-contained Windows executable:
 ```powershell
 dotnet test ThoriumVoiceBridge.slnx
 
-dotnet publish src/Launcher/Launcher.csproj `
+dotnet publish src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj `
   --configuration Release `
   --runtime win-x64 `
   --self-contained true `
@@ -81,7 +81,7 @@ Copy the executable to the release artifact path:
 ```powershell
 New-Item -ItemType Directory -Force -Path artifacts | Out-Null
 $out = "artifacts/ThoriumVoiceBridge-$version.exe"
-Copy-Item src/Launcher/bin/Release/net10.0-windows/win-x64/publish/ThoriumVoiceBridge.exe $out
+Copy-Item src/ThoriumVoiceBridge/bin/Release/net10.0-windows/win-x64/publish/ThoriumVoiceBridge.exe $out
 
 Get-Item $out | Format-Table Name, Length
 ```

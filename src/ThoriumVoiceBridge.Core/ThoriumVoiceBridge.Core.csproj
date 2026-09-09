@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Nota.ThoriumVoiceBridge</RootNamespace>
-    <AssemblyName>Nota.ThoriumVoiceBridge.Launcher.Core</AssemblyName>
+    <AssemblyName>Nota.ThoriumVoiceBridge.Core</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsTrimmable>true</IsTrimmable>

@@ -1,6 +1,6 @@
 ﻿using Nota.ThoriumVoiceBridge;
 
-namespace Launcher.Core.Tests;
+namespace ThoriumVoiceBridge.Core.Tests;
 
 public sealed class VoiceBridgeServiceTests
 {
