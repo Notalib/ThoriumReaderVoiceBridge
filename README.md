@@ -23,17 +23,14 @@ Because it writes to `HKLM`, the app requires administrator rights.
 | --- | --- |
 | `src/Launcher.Core/` | Platform-neutral voice bridge service and registry abstraction |
 | `src/Launcher/` | Native .NET 10 WinForms application, Windows registry adapter, and image assets |
-| `packaging/` | WiX v6 authoring for the MSI |
 | `signing/` | Azure Artifact Signing (formerly Trusted Signing) account metadata |
-| `.github/workflows/` | CI: build, sign, package, release |
+| `.github/workflows/` | CI: build, sign, and release the executable |
 
-## Why an MSI and not MSIX
+## Distribution
 
-MSIX was considered and rejected. Packaged MSIX apps cannot declare
-`requestedExecutionLevel=requireAdministrator`, and writes to `HKLM` from inside the
-package container are blocked. Both are hard requirements for this app, so the MSI is
-not a stopgap — it is the only viable option unless the app stops editing machine-wide
-registry state.
+The release is a single self-contained, signed `ThoriumVoiceBridge.exe` for 64-bit
+Windows. It has no .NET or PowerShell dependency. Windows asks for administrator
+permission when it starts, because the app writes to `HKLM`.
 
 ## Building locally
 
@@ -43,19 +40,6 @@ from macOS or Linux with `EnableWindowsTargeting`; the resulting app runs on Win
 ```powershell
 dotnet test ThoriumVoiceBridge.slnx
 dotnet publish src/Launcher/Launcher.csproj -c Release -r win-x64 --self-contained true
-
-$stage = "artifacts/stage"
-New-Item -ItemType Directory -Force -Path $stage | Out-Null
-Copy-Item src/Launcher/bin/Release/net10.0-windows/win-x64/publish/ThoriumVoiceBridge.exe $stage
-Copy-Item src/App/KB_icon.ico, src/App/KB_logo.png $stage
-
-dotnet tool install --global wix --version 6.*
-$wixVersion = (wix --version)
-wix extension add -g "WixToolset.UI.wixext/$wixVersion"
-
-wix build packaging/Package.wxs -ext WixToolset.UI.wixext `
-  -d Version=1.3.0 -d StageDir="$($PWD.Path)\artifacts\stage" `
-  -arch x64 -out artifacts/ThoriumVoiceBridge-1.3.0.msi
 ```
 
 The native app uses a manifest to request administrator rights before opening the
@@ -63,21 +47,18 @@ machine-wide voice registry.
 
 ## Releasing
 
-Every push to `main` builds, signs and uploads an MSI as a workflow artifact.
+Every push to `main` builds, signs and uploads the executable as a workflow artifact.
 
 To publish a release, bump `<Version>` in
 [src/Launcher/Launcher.csproj](src/Launcher/Launcher.csproj), update
 [CHANGELOG.md](CHANGELOG.md), merge to `main`, then run the **Build** workflow manually
 with **Create a GitHub Release** enabled. The version in the csproj is the single source
-of truth — it drives the exe file version, the MSI `ProductVersion`, the artifact name and
-the release tag.
+of truth — it drives the EXE file version, artifact name, and release tag.
 
 ## Signing setup
 
 Signing uses [`azure/artifact-signing-action`](https://github.com/Azure/artifact-signing-action)
-with the account details in [signing/metadata.json](signing/metadata.json). The launcher is
-signed before the MSI is built so its signature is embedded in the package; the MSI is then
-signed as a whole.
+with the account details in [signing/metadata.json](signing/metadata.json).
 
 ### Manual Signing
 For a manual Windows build using Azure CLI authentication, see
@@ -94,7 +75,7 @@ for this repo and the **Certificate Profile Signer** role on the signing account
 - `AZURE_SUBSCRIPTION_ID`
 
 Builds triggered by pull requests from forks cannot reach the signing service and produce an
-unsigned MSI, which is fine for smoke-testing but must never be distributed.
+unsigned executable, which is fine for smoke-testing but must never be distributed.
 
 ## Testing architecture
 
@@ -102,5 +83,4 @@ The service operates on `IVoiceRegistry`, so tests use an in-memory implementati
 run on macOS without touching Windows. They cover token copying, language normalization,
 Microsoft-voice filtering, existing-token protection, and marker-protected removal.
 The real `WindowsVoiceRegistry` uses the explicit 64-bit `HKLM` registry view and is
-validated by Windows CI and manual Windows smoke testing. The installer UI
-(`WixUI_Minimal`) remains English while the app UI is Danish.
+validated by Windows CI and manual Windows smoke testing.
