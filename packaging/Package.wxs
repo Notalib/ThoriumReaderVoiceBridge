@@ -18,7 +18,7 @@
            UpgradeCode="418D1F9F-2F1F-477F-8F98-2EF718CC86CA"
            Scope="perMachine"
            Compressed="yes"
-           Language="1033">
+           Language="1030">
 
     <SummaryInformation Description="Flytter SAPI-oplæsningsstemmer til Windows OneCore, så Thorium Reader kan bruge dem." />
 
@@ -29,7 +29,11 @@
 
     <Icon Id="AppIcon.ico" SourceFile="$(StageDir)\KB_icon.ico" />
     <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
-    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <!-- Branding shown in the WixUI_Minimal wizard chrome; no restrictive license, so License.rtf just explains the app is free to use. -->
+    <WixVariable Id="WixUIBannerBmp" Value="Banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Dialog.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
 
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="Tilføj stemmer til Thorium" />
