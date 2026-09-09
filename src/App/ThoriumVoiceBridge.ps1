@@ -568,7 +568,7 @@ function Refresh-Lists {
     if ($chkDanishOnly.Checked) {
         $sapi = $sapi | Where-Object { $_.LanguageHex -eq "0406" }
         $oneCore = $oneCore | Where-Object { $_.LanguageHex -eq "0406" }
-		
+
     }
 
     $showMicrosoft = $chkShowMicrosoft.Checked
@@ -614,7 +614,7 @@ function Refresh-Lists {
 
     Log "Opdateret. Ikke i Thorium: $($listLeft.Items.Count) | I Thorium: $($listRight.Items.Count)"
     Update-ActionButton
-	
+
 	Set-EqualColumnWidths -ListView $listLeft
     Set-EqualColumnWidths -ListView $listRight
 }
