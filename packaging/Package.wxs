@@ -37,7 +37,9 @@
     <WixVariable Id="WixUILicenseRtf" Value="packaging\License.rtf" />
 
     <StandardDirectory Id="ProgramFiles6432Folder">
-      <Directory Id="INSTALLFOLDER" Name="Tilføj stemmer til Thorium" />
+      <Directory Id="NotaFolder" Name="Det Kgl. Bibliotek - Nota">
+        <Directory Id="INSTALLFOLDER" Name="ThoriumVoiceBridge" />
+      </Directory>
     </StandardDirectory>
 
     <StandardDirectory Id="ProgramMenuFolder" />
@@ -50,6 +52,7 @@
                   Name="Tilføj stemmer til Thorium"
                   Description="Gør SAPI-oplæsningsstemmer tilgængelige i Thorium Reader"
                   Icon="AppIcon.ico"
+                  Target="[#LauncherExe]"
                   Advertise="no" />
       </Component>
 
