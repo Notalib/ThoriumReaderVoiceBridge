@@ -22,7 +22,7 @@
     <AssemblyName>ThoriumVoiceBridge</AssemblyName>
     <RootNamespace>Nota.ThoriumVoiceBridge</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>..\App\KB_icon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\KB_icon.ico</ApplicationIcon>
     <Deterministic>true</Deterministic>
     <Version>1.3.0</Version>
     <Product>Tilføj stemmer til Thorium</Product>
@@ -34,6 +34,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Launcher.Core\Launcher.Core.csproj" />
+    <EmbeddedResource Include="Assets\KB_icon.ico" LogicalName="KB_icon.ico" />
+    <EmbeddedResource Include="Assets\KB_logo.png" LogicalName="KB_logo.png" />
   </ItemGroup>
 
 </Project>

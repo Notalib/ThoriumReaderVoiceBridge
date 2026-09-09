@@ -12,7 +12,7 @@ internal static class Program
         var service = new VoiceBridgeService(registry);
         try
         {
-            Application.Run(new MainForm(service, AppContext.BaseDirectory));
+            Application.Run(new MainForm(service));
             return 0;
         }
         catch (UnauthorizedAccessException)

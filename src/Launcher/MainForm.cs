@@ -17,7 +17,7 @@ internal sealed class MainForm : Form
     private readonly Size normalSize = new(988, 453);
     private readonly Size logSize = new(980, 580);
 
-    public MainForm(VoiceBridgeService service, string baseDirectory)
+    public MainForm(VoiceBridgeService service)
     {
         this.service = service;
         Text = "Tilføj stemmer til Thorium";
@@ -28,10 +28,10 @@ internal sealed class MainForm : Form
         ClientSize = normalSize;
         Font = new Font("Segoe UI", 9);
 
-        var iconPath = Path.Combine(baseDirectory, "KB_icon.ico");
-        if (File.Exists(iconPath))
+        using var iconStream = typeof(MainForm).Assembly.GetManifestResourceStream("KB_icon.ico");
+        if (iconStream is not null)
         {
-            try { Icon = new Icon(iconPath); } catch (Exception) { }
+            Icon = new Icon(iconStream);
         }
 
         var logo = new PictureBox
@@ -41,10 +41,11 @@ internal sealed class MainForm : Form
             SizeMode = PictureBoxSizeMode.Zoom,
             Anchor = AnchorStyles.Top | AnchorStyles.Right
         };
-        var logoPath = Path.Combine(baseDirectory, "KB_logo.png");
-        if (File.Exists(logoPath))
+        using var logoStream = typeof(MainForm).Assembly.GetManifestResourceStream("KB_logo.png");
+        if (logoStream is not null)
         {
-            try { logo.Image = Image.FromFile(logoPath); } catch (Exception) { }
+            using var image = Image.FromStream(logoStream);
+            logo.Image = new Bitmap(image);
         }
 
         var title = new Label
