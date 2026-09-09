@@ -76,7 +76,7 @@ function Get-LangLabel([string]$langHex) {
         # Spansk
         "040A" { "Spansk (ES)" }
         "080A" { "Spansk (MX)" }
-        "0C0A" { "Spansk (ES – modern)" }
+        "0C0A" { "Spansk (ES - modern)" }
         "140A" { "Spansk (CR)" }
         "180A" { "Spansk (PA)" }
         "1C0A" { "Spansk (DO)" }
@@ -326,7 +326,7 @@ function Remove-OneCoreToken([string]$tokenName) {
 function Remove-FromThorium([string]$tokenName) {
     $attrPath = Join-Path (Join-Path $OneCoreRoot $tokenName) "Attributes"
     if (-not (Test-Path $attrPath)) {
-        Log "Fjern: $tokenName mangler Attributes – springer over."
+        Log "Fjern: $tokenName mangler Attributes - springer over."
         return $false
     }
 
@@ -337,7 +337,7 @@ function Remove-FromThorium([string]$tokenName) {
         return $ok
     }
 
-    Log "Fjern: $tokenName er ikke markeret (native/ukendt) – kan ikke fjernes."
+    Log "Fjern: $tokenName er ikke markeret (native/ukendt) - kan ikke fjernes."
     return $false
 }
 

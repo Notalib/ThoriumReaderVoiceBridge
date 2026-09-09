@@ -13,7 +13,7 @@
   <?endif?>
 
   <Package Name="Tilføj stemmer til Thorium"
-           Manufacturer="Det Kgl. Bibliotek – Nota-service"
+           Manufacturer="Det Kgl. Bibliotek - Nota-service"
            Version="$(Version)"
            UpgradeCode="418D1F9F-2F1F-477F-8F98-2EF718CC86CA"
            Scope="perMachine"
