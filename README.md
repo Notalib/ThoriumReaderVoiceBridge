@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 # tts-windows-voice-fixer
 
 Windows-værktøj der kopierer installerede SAPI 5-oplæsningsstemmer over i Windows'
@@ -94,7 +93,6 @@ unsigned MSI, which is fine for smoke-testing but must never be distributed.
   `-ExecutionPolicy Bypass`. This is acceptable because the script sits in `Program Files`
   and is only writable by administrators, but it would fail under an `AllSigned` policy.
 - The installer UI (`WixUI_Minimal`) is English while the app UI is Danish.
-=======
 # tts-windows-voice-fixer
 
 Windows-værktøj der kopierer installerede SAPI 5-oplæsningsstemmer over i Windows'
@@ -195,4 +193,3 @@ Microsoft-voice filtering, existing-token protection, and marker-protected remov
 The real `WindowsVoiceRegistry` uses the explicit 64-bit `HKLM` registry view and is
 validated by Windows CI and manual Windows smoke testing. The installer UI
 (`WixUI_Minimal`) remains English while the app UI is Danish.
->>>>>>> Stashed changes
