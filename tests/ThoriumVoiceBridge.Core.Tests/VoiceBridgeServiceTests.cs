@@ -1,4 +1,4 @@
-﻿using Nota.ThoriumVoiceBridge;
+using Nota.ThoriumVoiceBridge;
 
 namespace ThoriumVoiceBridge.Core.Tests;
 

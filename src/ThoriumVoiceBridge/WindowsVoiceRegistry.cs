@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Nota.ThoriumVoiceBridge;
+using Microsoft.Win32;
 
 namespace Nota.ThoriumVoiceBridge;
 

@@ -1,4 +1,4 @@
-﻿namespace Nota.ThoriumVoiceBridge;
+namespace Nota.ThoriumVoiceBridge;
 
 public enum VoiceRegistryHive
 {
