@@ -47,14 +47,6 @@ jobs:
           "version=$version" >> $env:GITHUB_OUTPUT
           Write-Host "Version: $version"
 
-      - name: Lint PowerShell
-        shell: pwsh
-        run: |
-          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
-          $findings = Invoke-ScriptAnalyzer -Path src/App -Recurse -Severity Error
-          $findings | Format-Table -AutoSize
-          if ($findings) { throw "PSScriptAnalyzer reported $($findings.Count) error(s)." }
-
       - name: Build launcher
         run: dotnet publish src/Launcher/Launcher.csproj --configuration Release --runtime win-x64 --self-contained true -p:Version=${{ steps.version.outputs.version }}
 
@@ -64,7 +56,6 @@ jobs:
           $stage = "artifacts/stage"
           New-Item -ItemType Directory -Force -Path $stage | Out-Null
           Copy-Item src/Launcher/bin/Release/net10.0-windows/win-x64/publish/ThoriumVoiceBridge.exe $stage
-          Copy-Item src/App/ThoriumVoiceBridge.ps1 $stage
           Copy-Item src/App/KB_icon.ico $stage
           Copy-Item src/App/KB_logo.png $stage
           Get-ChildItem $stage | Format-Table Name, Length

@@ -53,10 +53,6 @@
                   Advertise="no" />
       </Component>
 
-      <Component Id="ScriptComponent">
-        <File Id="AppScript" Source="$(StageDir)\ThoriumVoiceBridge.ps1" KeyPath="yes" />
-      </Component>
-
       <Component Id="IconComponent">
         <File Id="AppIconFile" Source="$(StageDir)\KB_icon.ico" KeyPath="yes" />
       </Component>
