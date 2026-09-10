@@ -20,15 +20,29 @@ internal sealed class MainForm : Form
         Text = "Tilføj stemmer til Thorium";
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedDialog;
+        ShowIcon = true;
         MaximizeBox = false;
         KeyPreview = true;
         ClientSize = normalSize;
         Font = new Font("Segoe UI", 9);
 
-        using var iconStream = typeof(MainForm).Assembly.GetManifestResourceStream("KB_icon.ico");
+        using var iconStream = OpenEmbeddedAsset("KB_icon.ico");
         if (iconStream is not null)
         {
             Icon = new Icon(iconStream);
+        }
+
+        var headerIcon = new PictureBox
+        {
+            Location = new Point(12, 12),
+            Size = new Size(48, 48),
+            SizeMode = PictureBoxSizeMode.Zoom
+        };
+        using var headerIconStream = OpenEmbeddedAsset("KB_icon.ico");
+        if (headerIconStream is not null)
+        {
+            using var image = new Icon(headerIconStream, headerIcon.Size).ToBitmap();
+            headerIcon.Image = new Bitmap(image);
         }
 
         var logo = new PictureBox
@@ -38,7 +52,7 @@ internal sealed class MainForm : Form
             SizeMode = PictureBoxSizeMode.Zoom,
             Anchor = AnchorStyles.Top | AnchorStyles.Right
         };
-        using var logoStream = typeof(MainForm).Assembly.GetManifestResourceStream("KB_logo.png");
+        using var logoStream = OpenEmbeddedAsset("KB_logo.png");
         if (logoStream is not null)
         {
             using var image = Image.FromStream(logoStream);
@@ -48,13 +62,13 @@ internal sealed class MainForm : Form
         var title = new Label
         {
             Text = "Tilføj stemmer til Thorium",
-            Location = new Point(12, 8),
+            Location = new Point(72, 12),
             Size = new Size(500, 24),
             Font = new Font("Segoe UI", 11, FontStyle.Bold)
         };
 
-        statusLabel.Location = new Point(12, 34);
-        statusLabel.Size = new Size(740, 36);
+        statusLabel.Location = new Point(72, 38);
+        statusLabel.Size = new Size(680, 32);
         danishOnly.Location = new Point(12, 74);
         leftLabel.Location = new Point(12, 100);
         rightLabel.Location = new Point(520, 100);
@@ -67,7 +81,7 @@ internal sealed class MainForm : Form
         logBox.Location = new Point(12, 417);
         logBox.Size = new Size(948, 140);
 
-        Controls.AddRange([title, statusLabel, logo, danishOnly, leftLabel, rightLabel, leftList, rightList, actionButton, logBox]);
+        Controls.AddRange([headerIcon, title, statusLabel, logo, danishOnly, leftLabel, rightLabel, leftList, rightList, actionButton, logBox]);
         WireEvents();
         Shown += (_, _) => RefreshLists();
         KeyDown += OnKeyDown;
@@ -159,6 +173,16 @@ internal sealed class MainForm : Form
         SetEqualColumnWidths(rightList);
         UpdateActionButton();
         Log($"Opdateret. Ikke i Thorium: {leftList.Items.Count} | I Thorium: {rightList.Items.Count}");
+    }
+
+    private static Stream? OpenEmbeddedAsset(string fileName)
+    {
+        var assembly = typeof(MainForm).Assembly;
+        return assembly.GetManifestResourceStream(fileName)
+            ?? assembly.GetManifestResourceNames()
+                .Where(resourceName => resourceName.EndsWith($".{fileName}", StringComparison.Ordinal))
+                .Select(assembly.GetManifestResourceStream)
+                .FirstOrDefault(stream => stream is not null);
     }
 
     private static void AddRow(ListView list, VoiceToken voice, bool canSelect)
