@@ -32,19 +32,6 @@ internal sealed class MainForm : Form
             Icon = new Icon(iconStream);
         }
 
-        var headerIcon = new PictureBox
-        {
-            Location = new Point(12, 12),
-            Size = new Size(48, 48),
-            SizeMode = PictureBoxSizeMode.Zoom
-        };
-        using var headerIconStream = OpenEmbeddedAsset("KB_icon.ico");
-        if (headerIconStream is not null)
-        {
-            using var image = new Icon(headerIconStream, headerIcon.Size).ToBitmap();
-            headerIcon.Image = new Bitmap(image);
-        }
-
         var logo = new PictureBox
         {
             Location = new Point(770, 15),
@@ -62,12 +49,12 @@ internal sealed class MainForm : Form
         var title = new Label
         {
             Text = "Tilføj stemmer til Thorium",
-            Location = new Point(72, 12),
+            Location = new Point(12, 12),
             Size = new Size(500, 24),
             Font = new Font("Segoe UI", 11, FontStyle.Bold)
         };
 
-        statusLabel.Location = new Point(72, 38);
+        statusLabel.Location = new Point(12, 38);
         statusLabel.Size = new Size(680, 32);
         danishOnly.Location = new Point(12, 74);
         leftLabel.Location = new Point(12, 100);
@@ -81,7 +68,7 @@ internal sealed class MainForm : Form
         logBox.Location = new Point(12, 417);
         logBox.Size = new Size(948, 140);
 
-        Controls.AddRange([headerIcon, title, statusLabel, logo, danishOnly, leftLabel, rightLabel, leftList, rightList, actionButton, logBox]);
+        Controls.AddRange([title, statusLabel, logo, danishOnly, leftLabel, rightLabel, leftList, rightList, actionButton, logBox]);
         WireEvents();
         Shown += (_, _) => RefreshLists();
         KeyDown += OnKeyDown;
