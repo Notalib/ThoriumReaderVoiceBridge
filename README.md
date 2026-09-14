@@ -64,6 +64,17 @@ with the account details in [signing/metadata.json](signing/metadata.json).
 For a manual Windows build using Azure CLI authentication, see
 [docs/manual-windows-signing.md](docs/manual-windows-signing.md).
 
+After the prerequisites are installed and `az login` has been completed, run the
+release build, signing, and signature verification with:
+
+```powershell
+.\tools\Sign-WindowsRelease.ps1
+```
+
+Use `.\tools\Sign-WindowsRelease.ps1 -CheckOnly` to validate the local signing
+tools without building or signing anything. The signed executable is written to
+`artifacts/ThoriumVoiceBridge-<version>.exe`.
+
 ### Automated Workflow
 
 Authentication is OpenID Connect, so no secret values are stored in the repository. The

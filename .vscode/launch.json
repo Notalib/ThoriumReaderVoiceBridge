@@ -6,9 +6,10 @@
   "configurations": [
     {
       "name": "C#: Thorium Voice Bridge",
-      "type": "dotnet",
+      "type": "coreclr",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj",
+      "program": "${workspaceFolder}/src/ThoriumVoiceBridge/bin/Debug/net10.0-windows/win-x64/ThoriumVoiceBridge.exe",
+      "cwd": "${workspaceFolder}/src/ThoriumVoiceBridge/bin/Debug/net10.0-windows/win-x64",
       "preLaunchTask": "build Thorium Voice Bridge"
     }
   ]
