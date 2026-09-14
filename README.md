@@ -1,4 +1,4 @@
-# tts-windows-voice-fixer
+# Thorium Voice Bridge
 
 Windows-værktøj der kopierer installerede SAPI 5-oplæsningsstemmer over i Windows'
 OneCore-stemmeregister, så de kan bruges i **Thorium Reader**. Stemmer der er tilføjet
