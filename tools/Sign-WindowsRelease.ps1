@@ -180,7 +180,8 @@ if ($PublishRelease) {
     $headCommit = & git rev-parse HEAD
     if ($LASTEXITCODE -ne 0) { throw 'Could not resolve the current Git commit.' }
 
-    & $gh release view $tag --repo $repository *> $null
+    # gh writes "release not found" to stderr, which $ErrorActionPreference = 'Stop' would turn into a terminating error.
+    & { $ErrorActionPreference = 'Continue'; & $gh release view $tag --repo $repository 2>&1 | Out-Null }
     if ($LASTEXITCODE -eq 0) {
         $releaseCommit = & $gh api "repos/$repository/commits/$tag" --jq '.sha'
         if ($LASTEXITCODE -ne 0) { throw "Could not resolve release tag $tag." }
