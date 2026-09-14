@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thorium Voice Bridge UI Preview</title>
+  <style>
+    :root {
+      --window-bg: #f0f0f0;
+      --control-border: #8a8a8a;
+      --control-bg: #ffffff;
+      --text: #111111;
+      --muted: #666666;
+      --button-bg: #e1e1e1;
+      --button-border: #adadad;
+      --focus: #0078d4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      background: #d7e0e8;
+      color: var(--text);
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 14px;
+    }
+
+    .window {
+      width: 988px;
+      height: 453px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #777777;
+      background: var(--window-bg);
+      box-shadow: 0 18px 55px rgb(0 0 0 / 22%);
+    }
+
+    .header-icon {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .title {
+      position: absolute;
+      left: 72px;
+      top: 12px;
+      width: 500px;
+      height: 24px;
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 24px;
+    }
+
+    .status {
+      position: absolute;
+      left: 72px;
+      top: 38px;
+      width: 680px;
+      height: 32px;
+      margin: 0;
+      line-height: 16px;
+    }
+
+    .logo {
+      position: absolute;
+      right: 28px;
+      top: 15px;
+      width: 190px;
+      height: 55px;
+      object-fit: contain;
+    }
+
+    label.filter {
+      position: absolute;
+      left: 12px;
+      top: 74px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 20px;
+    }
+
+    input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      accent-color: var(--focus);
+    }
+
+    .list-label {
+      position: absolute;
+      top: 100px;
+      margin: 0;
+      line-height: 18px;
+    }
+
+    .left-label {
+      left: 12px;
+    }
+
+    .right-label {
+      left: 520px;
+    }
+
+    table {
+      position: absolute;
+      top: 122px;
+      width: 440px;
+      height: 280px;
+      display: block;
+      overflow: hidden;
+      border: 1px solid var(--control-border);
+      border-collapse: collapse;
+      background: var(--control-bg);
+      font-size: 13px;
+    }
+
+    .left-list {
+      left: 12px;
+    }
+
+    .right-list {
+      left: 520px;
+    }
+
+    thead,
+    tbody,
+    tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      height: 25px;
+      padding: 3px 6px;
+      border-right: 1px solid #d0d0d0;
+      border-bottom: 1px solid #d0d0d0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: left;
+      font-weight: 400;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 0;
+    }
+
+    th {
+      background: #f7f7f7;
+    }
+
+    .row-muted {
+      color: var(--muted);
+    }
+
+    .move-button {
+      position: absolute;
+      left: 458px;
+      top: 202px;
+      width: 56px;
+      height: 120px;
+      border: 1px solid var(--button-border);
+      background: var(--button-bg);
+      color: var(--text);
+      font: inherit;
+      white-space: pre-line;
+    }
+
+    .log-box {
+      position: absolute;
+      left: 12px;
+      top: 417px;
+      width: 948px;
+      height: 140px;
+      display: none;
+      border: 1px solid var(--control-border);
+      background: var(--control-bg);
+    }
+
+    @media (max-width: 1040px) {
+      body {
+        min-width: 1040px;
+        place-items: start center;
+        padding-top: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="window" aria-label="Tilføj stemmer til Thorium preview">
+    <img class="header-icon" src="../../src/ThoriumVoiceBridge/Assets/KB_icon.ico" alt="">
+    <h1 class="title">Tilføj stemmer til Thorium</h1>
+    <p class="status">Tilføj eller fjern oplæsningsstemmer, så de kan bruges i Thorium Reader.</p>
+    <img class="logo" src="../../src/ThoriumVoiceBridge/Assets/KB_logo.png" alt="Det Kgl. Bibliotek logo">
+
+    <label class="filter"><input type="checkbox">Vis kun Dansk</label>
+
+    <p class="list-label left-label">Ikke i Thorium</p>
+    <p class="list-label right-label">I Thorium</p>
+
+    <table class="left-list" aria-label="Ikke i Thorium">
+      <thead>
+        <tr><th>Navn</th><th>Leverandør</th><th>Sprog</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ida</td><td>Acme Voice</td><td>Dansk</td></tr>
+        <tr><td>Mads</td><td>Acme Voice</td><td>Dansk</td></tr>
+        <tr><td>Sofie</td><td>Nordic Speech</td><td>Dansk</td></tr>
+      </tbody>
+    </table>
+
+    <button class="move-button" type="button">Flyt&#10;→</button>
+
+    <table class="right-list" aria-label="I Thorium">
+      <thead>
+        <tr><th>Navn</th><th>Leverandør</th><th>Sprog</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-muted"><td>Anna</td><td>Microsoft</td><td>Dansk</td></tr>
+        <tr><td>Jakob</td><td>Nordic Speech</td><td>Dansk</td></tr>
+      </tbody>
+    </table>
+
+    <div class="log-box" aria-hidden="true"></div>
+  </main>
+</body>
+</html>

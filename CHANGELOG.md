@@ -7,10 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- The app is now distributed as a signed MSI installer with a Start Menu shortcut,
-  replacing the manually copied script folder.
-- Elevation now happens through a single UAC prompt on the shortcut instead of the
-  previous `.cmd` → `.vbs` → PowerShell chain.
+- The native WinForms UI now shows the KB icon in the top-left header and the KB logo on the right, matching the previous PowerShell UI.
+- The app is now a native .NET 10 WinForms executable with no PowerShell dependency.
+- Releases now distribute a single self-contained, signed executable instead of an MSI installer.
+- Voice bridge operations are covered by in-memory tests that can run on macOS.
 
 ## [1.3.0]
 

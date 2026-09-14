@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   build:
-    # The Artifact Signing action and WiX both require Windows.
+    # Artifact Signing requires Windows.
     runs-on: windows-2025
 
     outputs:
@@ -41,33 +41,22 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $csproj = [xml](Get-Content src/Launcher/Launcher.csproj)
+          $csproj = [xml](Get-Content src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj)
           $version = $csproj.Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
-          if (-not $version) { throw "No <Version> found in src/Launcher/Launcher.csproj" }
+          if (-not $version) { throw "No <Version> found in src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj" }
           "version=$version" >> $env:GITHUB_OUTPUT
           Write-Host "Version: $version"
 
-      - name: Lint PowerShell
+      - name: Build application
+        run: dotnet publish src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj --configuration Release --runtime win-x64 --self-contained true -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Stage executable
         shell: pwsh
         run: |
-          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
-          $findings = Invoke-ScriptAnalyzer -Path src/App -Recurse -Severity Error
-          $findings | Format-Table -AutoSize
-          if ($findings) { throw "PSScriptAnalyzer reported $($findings.Count) error(s)." }
-
-      - name: Build launcher
-        run: dotnet publish src/Launcher/Launcher.csproj --configuration Release --runtime win-x64 --self-contained true -p:Version=${{ steps.version.outputs.version }}
-
-      - name: Stage payload
-        shell: pwsh
-        run: |
-          $stage = "artifacts/stage"
-          New-Item -ItemType Directory -Force -Path $stage | Out-Null
-          Copy-Item src/Launcher/bin/Release/net10.0-windows/win-x64/publish/ThoriumVoiceBridge.exe $stage
-          Copy-Item src/App/ThoriumVoiceBridge.ps1 $stage
-          Copy-Item src/App/KB_icon.ico $stage
-          Copy-Item src/App/KB_logo.png $stage
-          Get-ChildItem $stage | Format-Table Name, Length
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          $out = "artifacts/Tilføj stemmer til Thorium.exe"
+          Copy-Item "src/ThoriumVoiceBridge/bin/Release/net10.0-windows/win-x64/publish/Tilføj stemmer til Thorium.exe" $out
+          Get-Item $out | Format-Table Name, Length
 
       - name: Read signing metadata
         id: signing
@@ -79,7 +68,7 @@ jobs:
           "profile=$($meta.CertificateProfileName)" >> $env:GITHUB_OUTPUT
 
       # Pull requests from forks have no access to the OIDC federated credential,
-      # so those builds produce an unsigned MSI for smoke-testing only.
+      # so those builds produce an unsigned executable for smoke-testing only.
       - name: Decide whether to sign
         id: gate
         shell: pwsh
@@ -97,40 +86,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # The launcher must be signed before the MSI is built, so its signature ends up inside the package.
-      - name: Sign launcher
-        if: steps.gate.outputs.sign == 'true'
-        uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
-        with:
-          endpoint: ${{ steps.signing.outputs.endpoint }}
-          signing-account-name: ${{ steps.signing.outputs.account }}
-          certificate-profile-name: ${{ steps.signing.outputs.profile }}
-          files-folder: ${{ github.workspace }}\artifacts\stage
-          files-folder-filter: exe
-          file-digest: SHA256
-          timestamp-rfc3161: http://timestamp.acs.microsoft.com
-          timestamp-digest: SHA256
-
-      - name: Install WiX
-        shell: pwsh
-        run: |
-          dotnet tool install --global wix --version 6.*
-          $wixVersion = (wix --version)
-          wix extension add -g "WixToolset.UI.wixext/$wixVersion"
-
-      - name: Build MSI
-        shell: pwsh
-        run: |
-          $version = "${{ steps.version.outputs.version }}"
-          $out = "artifacts/ThoriumVoiceBridge-$version.msi"
-          wix build packaging/Package.wxs `
-            -ext WixToolset.UI.wixext `
-            -d Version=$version `
-            -d StageDir="$($PWD.Path)\artifacts\stage" `
-            -arch x64 `
-            -out $out
-
-      - name: Sign MSI
+      - name: Sign executable
         if: steps.gate.outputs.sign == 'true'
         uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
         with:
@@ -138,7 +94,7 @@ jobs:
           signing-account-name: ${{ steps.signing.outputs.account }}
           certificate-profile-name: ${{ steps.signing.outputs.profile }}
           files-folder: ${{ github.workspace }}\artifacts
-          files-folder-filter: msi
+          files-folder-filter: exe
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
@@ -147,19 +103,16 @@ jobs:
         if: steps.gate.outputs.sign == 'true'
         shell: pwsh
         run: |
-          $failed = $false
-          foreach ($file in @("artifacts/stage/ThoriumVoiceBridge.exe", "artifacts/ThoriumVoiceBridge-${{ steps.version.outputs.version }}.msi")) {
-            $sig = Get-AuthenticodeSignature $file
-            Write-Host "$file -> $($sig.Status) / $($sig.SignerCertificate.Subject)"
-            if ($sig.Status -ne 'Valid') { $failed = $true }
-          }
-          if ($failed) { throw "One or more artifacts are not validly signed." }
+          $file = "artifacts/Tilføj stemmer til Thorium.exe"
+          $sig = Get-AuthenticodeSignature $file
+          Write-Host "$file -> $($sig.Status) / $($sig.SignerCertificate.Subject)"
+          if ($sig.Status -ne 'Valid') { throw "The executable is not validly signed." }
 
-      - name: Upload MSI
+      - name: Upload executable
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ThoriumVoiceBridge-${{ steps.version.outputs.version }}-msi
-          path: artifacts/*.msi
+          name: ThoriumVoiceBridge-${{ steps.version.outputs.version }}-exe
+          path: artifacts/*.exe
           if-no-files-found: error
 
   release:
@@ -169,10 +122,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Download MSI
+      - name: Download executable
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: ThoriumVoiceBridge-${{ needs.build.outputs.version }}-msi
+          name: ThoriumVoiceBridge-${{ needs.build.outputs.version }}-exe
           path: artifacts
 
       - name: Create release
@@ -181,4 +134,4 @@ jobs:
           tag_name: v${{ needs.build.outputs.version }}
           name: v${{ needs.build.outputs.version }}
           generate_release_notes: true
-          files: artifacts/*.msi
+          files: artifacts/*.exe

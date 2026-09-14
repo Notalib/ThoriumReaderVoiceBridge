@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build Thorium Voice Bridge",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"${workspaceFolder}/src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}

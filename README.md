@@ -21,60 +21,72 @@ Because it writes to `HKLM`, the app requires administrator rights.
 
 | Path | Contents |
 | --- | --- |
-| `src/App/` | The PowerShell WinForms application and its image assets |
-| `src/Launcher/` | Small .NET Framework 4.8 launcher that triggers UAC and starts the script hidden |
-| `packaging/` | WiX v6 authoring for the MSI |
+| `src/ThoriumVoiceBridge.Core/` | Platform-neutral voice bridge service and registry abstraction |
+| `src/ThoriumVoiceBridge/` | Native .NET 10 WinForms application, Windows registry adapter, and image assets |
 | `signing/` | Azure Artifact Signing (formerly Trusted Signing) account metadata |
-| `.github/workflows/` | CI: lint, build, sign, package, release |
+| `.github/workflows/` | CI: build, sign, and release the executable |
 
-## Why an MSI and not MSIX
+## Distribution
 
-MSIX was considered and rejected. Packaged MSIX apps cannot declare
-`requestedExecutionLevel=requireAdministrator`, and writes to `HKLM` from inside the
-package container are blocked. Both are hard requirements for this app, so the MSI is
-not a stopgap — it is the only viable option unless the app stops editing machine-wide
-registry state.
+The release is a single self-contained, signed `Tilføj stemmer til Thorium.exe` for 64-bit
+Windows. It has no .NET or PowerShell dependency. Windows asks for administrator
+permission when it starts, because the app writes to `HKLM`.
 
 ## Building locally
 
-Requires the .NET 8 SDK and the .NET Framework 4.8 targeting pack on Windows.
+Requires the .NET 10 SDK. The Windows-targeted project can be compiled and published
+from macOS or Linux with `EnableWindowsTargeting`; the resulting app runs on Windows.
 
 ```powershell
-dotnet build src/Launcher/Launcher.csproj -c Release
-
-$stage = "artifacts/stage"
-New-Item -ItemType Directory -Force -Path $stage | Out-Null
-Copy-Item src/Launcher/bin/Release/net48/ThoriumVoiceBridge.exe $stage
-Copy-Item src/App/ThoriumVoiceBridge.ps1, src/App/KB_icon.ico, src/App/KB_logo.png $stage
-
-dotnet tool install --global wix --version 6.*
-wix extension add -g WixToolset.UI.wixext/6.*
-
-wix build packaging/Package.wxs -ext WixToolset.UI.wixext `
-  -d Version=1.3.0 -d StageDir="$($PWD.Path)\artifacts\stage" `
-  -arch x64 -out artifacts/ThoriumVoiceBridge-1.3.0.msi
+dotnet test ThoriumVoiceBridge.slnx
+dotnet publish src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj -c Release -r win-x64 --self-contained true
 ```
 
-To run the app without packaging it, launch `src/App/ThoriumVoiceBridge.ps1` from an
-elevated PowerShell prompt.
+The native app uses a manifest to request administrator rights before opening the
+machine-wide voice registry.
 
 ## Releasing
 
-Every push to `main` builds, signs and uploads an MSI as a workflow artifact.
+Every push to `main` builds, signs and uploads the executable as a workflow artifact.
 
 To publish a release, bump `<Version>` in
-[src/Launcher/Launcher.csproj](src/Launcher/Launcher.csproj), update
+[src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj](src/ThoriumVoiceBridge/ThoriumVoiceBridge.csproj), update
 [CHANGELOG.md](CHANGELOG.md), merge to `main`, then run the **Build** workflow manually
 with **Create a GitHub Release** enabled. The version in the csproj is the single source
-of truth — it drives the exe file version, the MSI `ProductVersion`, the artifact name and
-the release tag.
+of truth — it drives the EXE file version, artifact name, and release tag.
 
 ## Signing setup
 
 Signing uses [`azure/artifact-signing-action`](https://github.com/Azure/artifact-signing-action)
-with the account details in [signing/metadata.json](signing/metadata.json). The launcher is
-signed before the MSI is built so its signature is embedded in the package; the MSI is then
-signed as a whole.
+with the account details in [signing/metadata.json](signing/metadata.json).
+
+### Manual Signing
+For a manual Windows build using Azure CLI authentication, see
+[docs/manual-windows-signing.md](docs/manual-windows-signing.md).
+
+After the prerequisites are installed and `az login` has been completed, run the
+release build, signing, and signature verification with:
+
+```powershell
+.\tools\Sign-WindowsRelease.ps1
+```
+
+Use `.\tools\Sign-WindowsRelease.ps1 -CheckOnly` to validate the local signing
+tools without building or signing anything. The signed executable is written to
+`artifacts/Tilføj stemmer til Thorium.exe`.
+
+To create the matching `v<version>` GitHub release and upload the signed executable,
+install and authenticate GitHub CLI, commit and push the release changes, then run:
+
+```powershell
+winget install --id GitHub.cli
+gh auth login
+.\tools\Sign-WindowsRelease.ps1 -PublishRelease
+```
+
+If the release already exists at the current commit, its executable asset is replaced.
+
+### Automated Workflow
 
 Authentication is OpenID Connect, so no secret values are stored in the repository. The
 following repository secrets must point at an app registration with a federated credential
@@ -85,11 +97,19 @@ for this repo and the **Certificate Profile Signer** role on the signing account
 - `AZURE_SUBSCRIPTION_ID`
 
 Builds triggered by pull requests from forks cannot reach the signing service and produce an
-unsigned MSI, which is fine for smoke-testing but must never be distributed.
+unsigned executable, which is fine for smoke-testing but must never be distributed.
 
-## Known gaps
+## Testing architecture
 
-- The `.ps1` itself is not Authenticode-signed; the launcher invokes it with
-  `-ExecutionPolicy Bypass`. This is acceptable because the script sits in `Program Files`
-  and is only writable by administrators, but it would fail under an `AllSigned` policy.
-- The installer UI (`WixUI_Minimal`) is English while the app UI is Danish.
+The service operates on `IVoiceRegistry`, so tests use an in-memory implementation and
+run on macOS without touching Windows. They cover token copying, language normalization,
+Microsoft-voice filtering, existing-token protection, and marker-protected removal.
+The real `WindowsVoiceRegistry` uses the explicit 64-bit `HKLM` registry view and is
+validated by Windows CI and manual Windows smoke testing.
+
+## UI preview
+
+The WinForms app only runs on Windows, but the static preview at
+[tools/ui-preview/index.html](tools/ui-preview/index.html) mirrors the fixed-size form layout and
+loads the same KB icon and logo assets. Open it in a browser on macOS for quick visual checks
+before doing the final Windows smoke test.
