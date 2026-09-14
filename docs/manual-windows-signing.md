@@ -80,8 +80,8 @@ Copy the executable to the release artifact path:
 
 ```powershell
 New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-$out = "artifacts/ThoriumVoiceBridge-$version.exe"
-Copy-Item src/ThoriumVoiceBridge/bin/Release/net10.0-windows/win-x64/publish/ThoriumVoiceBridge.exe $out
+$out = "artifacts/Tilføj stemmer til Thorium.exe"
+Copy-Item "src/ThoriumVoiceBridge/bin/Release/net10.0-windows/win-x64/publish/Tilføj stemmer til Thorium.exe" $out
 
 Get-Item $out | Format-Table Name, Length
 ```
@@ -144,8 +144,27 @@ if ($sig.Status -ne "Valid") {
 The finished executable is written to:
 
 ```text
-artifacts/ThoriumVoiceBridge-<version>.exe
+artifacts/Tilføj stemmer til Thorium.exe
 ```
+
+## Publish a GitHub release
+
+The signing script can create the matching `v<version>` GitHub release and upload the
+verified executable. Install GitHub CLI and authenticate it first:
+
+```powershell
+winget install --id GitHub.cli
+gh auth login
+```
+
+Commit and push the release changes, then build, sign, verify, and publish with:
+
+```powershell
+.\tools\Sign-WindowsRelease.ps1 -PublishRelease
+```
+
+The script refuses to publish with tracked worktree changes. If the release already
+exists, its tag must point to the current commit and the executable asset is replaced.
 
 ## Troubleshooting
 

@@ -46,7 +46,7 @@
 
     <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
       <Component Id="LauncherExeComponent">
-        <File Id="LauncherExe" Source="$(StageDir)\ThoriumVoiceBridge.exe" KeyPath="yes" />
+        <File Id="LauncherExe" Source="$(StageDir)\Tilføj stemmer til Thorium.exe" KeyPath="yes" />
         <Shortcut Id="StartMenuShortcut"
                   Directory="ProgramMenuFolder"
                   Name="Tilføj stemmer til Thorium"

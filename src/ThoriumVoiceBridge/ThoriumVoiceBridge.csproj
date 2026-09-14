@@ -19,7 +19,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <AssemblyName>ThoriumVoiceBridge</AssemblyName>
+    <AssemblyName>Tilføj stemmer til Thorium</AssemblyName>
     <RootNamespace>Nota.ThoriumVoiceBridge</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\KB_icon.ico</ApplicationIcon>

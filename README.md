@@ -28,7 +28,7 @@ Because it writes to `HKLM`, the app requires administrator rights.
 
 ## Distribution
 
-The release is a single self-contained, signed `ThoriumVoiceBridge.exe` for 64-bit
+The release is a single self-contained, signed `Tilføj stemmer til Thorium.exe` for 64-bit
 Windows. It has no .NET or PowerShell dependency. Windows asks for administrator
 permission when it starts, because the app writes to `HKLM`.
 
@@ -73,7 +73,18 @@ release build, signing, and signature verification with:
 
 Use `.\tools\Sign-WindowsRelease.ps1 -CheckOnly` to validate the local signing
 tools without building or signing anything. The signed executable is written to
-`artifacts/ThoriumVoiceBridge-<version>.exe`.
+`artifacts/Tilføj stemmer til Thorium.exe`.
+
+To create the matching `v<version>` GitHub release and upload the signed executable,
+install and authenticate GitHub CLI, commit and push the release changes, then run:
+
+```powershell
+winget install --id GitHub.cli
+gh auth login
+.\tools\Sign-WindowsRelease.ps1 -PublishRelease
+```
+
+If the release already exists at the current commit, its executable asset is replaced.
 
 ### Automated Workflow
 

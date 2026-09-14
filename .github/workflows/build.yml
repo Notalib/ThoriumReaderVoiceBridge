@@ -54,8 +54,8 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-          $out = "artifacts/ThoriumVoiceBridge-${{ steps.version.outputs.version }}.exe"
-          Copy-Item src/ThoriumVoiceBridge/bin/Release/net10.0-windows/win-x64/publish/ThoriumVoiceBridge.exe $out
+          $out = "artifacts/Tilføj stemmer til Thorium.exe"
+          Copy-Item "src/ThoriumVoiceBridge/bin/Release/net10.0-windows/win-x64/publish/Tilføj stemmer til Thorium.exe" $out
           Get-Item $out | Format-Table Name, Length
 
       - name: Read signing metadata
@@ -103,7 +103,7 @@ jobs:
         if: steps.gate.outputs.sign == 'true'
         shell: pwsh
         run: |
-          $file = "artifacts/ThoriumVoiceBridge-${{ steps.version.outputs.version }}.exe"
+          $file = "artifacts/Tilføj stemmer til Thorium.exe"
           $sig = Get-AuthenticodeSignature $file
           Write-Host "$file -> $($sig.Status) / $($sig.SignerCertificate.Subject)"
           if ($sig.Status -ne 'Valid') { throw "The executable is not validly signed." }
