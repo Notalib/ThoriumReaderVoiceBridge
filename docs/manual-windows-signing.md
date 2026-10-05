@@ -1,8 +1,8 @@
 # Manual Windows executable build and signing
 
 This runbook builds and signs the standalone executable from a Windows machine. It is intended for
-manual release or verification builds using Azure CLI authentication for the
-`dfg@kb.dk` account.
+manual release or verification builds using Azure CLI authentication with an account
+that has the signing role described below.
 
 The repository stores the Artifact Signing account metadata in
 [`signing/metadata.json`](../signing/metadata.json). Azure CLI provides the
@@ -31,8 +31,8 @@ winget install -e --id Microsoft.Azure.ArtifactSigningClientTools
 ## Check out the repository
 
 ```powershell
-git clone https://github.com/Notalib/tts-windows-voice-fixer.git
-cd tts-windows-voice-fixer
+git clone https://github.com/Notalib/ThoriumReaderVoiceBridge.git
+cd ThoriumReaderVoiceBridge
 git pull --ff-only
 ```
 
