@@ -113,3 +113,7 @@ The WinForms app only runs on Windows, but the static preview at
 [tools/ui-preview/index.html](tools/ui-preview/index.html) mirrors the fixed-size form layout and
 loads the same KB icon and logo assets. Open it in a browser on macOS for quick visual checks
 before doing the final Windows smoke test.
+
+## License
+
+[MIT](LICENSE) © Det Kgl. Bibliotek
