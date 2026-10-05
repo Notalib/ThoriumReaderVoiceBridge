@@ -71,6 +71,28 @@ public sealed class VoiceBridgeServiceTests
         Assert.Equal(expected, VoiceBridgeService.NormalizeLanguage(input));
     }
 
+    [Theory]
+    [InlineData(true, "Dansk (DA)", "Stemmen findes allerede i Thorium.")]
+    [InlineData(false, "Danish (DA)", "The voice is already in Thorium.")]
+    public void TextFollowsTheSelectedLanguage(bool danish, string expectedLabel, string expectedMessage)
+    {
+        var registry = new InMemoryVoiceRegistry();
+        registry.SetVoice(VoiceRegistryHive.Sapi, new VoiceToken("Voice", "SAPI", "Vendor", "0406", null, null));
+        registry.SetVoice(VoiceRegistryHive.OneCore, new VoiceToken("Voice", "Native", "Vendor", "0406", null, null));
+
+        // Strings.Danish is process-wide; tests in this class run sequentially, so restore it afterwards.
+        Strings.Danish = danish;
+        try
+        {
+            Assert.Equal(expectedLabel, VoiceBridgeService.LanguageLabel("0406"));
+            Assert.Equal(expectedMessage, new VoiceBridgeService(registry).InstallVoice("Voice").Message);
+        }
+        finally
+        {
+            Strings.Danish = true;
+        }
+    }
+
     private sealed class InMemoryVoiceRegistry : IVoiceRegistry
     {
         private readonly Dictionary<(VoiceRegistryHive Hive, string TokenName), VoiceToken> voices = new();

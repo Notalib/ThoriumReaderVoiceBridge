@@ -5,19 +5,19 @@ internal sealed class MainForm : Form
     private readonly VoiceBridgeService service;
     private readonly ListView leftList = CreateListView();
     private readonly ListView rightList = CreateListView();
-    private readonly CheckBox danishOnly = new() { Text = "Vis kun Dansk", AutoSize = true };
+    private readonly CheckBox danishOnly = new() { Text = Strings.DanishOnly, AutoSize = true };
     private readonly Button actionButton = new() { Text = "—", Enabled = false };
     private readonly Label statusLabel = new() { AutoSize = false };
     private readonly RichTextBox logBox = new() { ReadOnly = true, Visible = false };
-    private readonly Label leftLabel = new() { Text = "Ikke i Thorium", AutoSize = true };
-    private readonly Label rightLabel = new() { Text = "I Thorium", AutoSize = true };
+    private readonly Label leftLabel = new() { Text = Strings.NotInThorium, AutoSize = true };
+    private readonly Label rightLabel = new() { Text = Strings.InThorium, AutoSize = true };
     private readonly Size normalSize = new(988, 453);
     private readonly Size logSize = new(980, 580);
 
     public MainForm(VoiceBridgeService service)
     {
         this.service = service;
-        Text = "Tilføj stemmer til Thorium";
+        Text = Strings.AppTitle;
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         ShowIcon = true;
@@ -48,7 +48,7 @@ internal sealed class MainForm : Form
 
         var title = new Label
         {
-            Text = "Tilføj stemmer til Thorium",
+            Text = Strings.AppTitle,
             Location = new Point(12, 12),
             Size = new Size(500, 24),
             Font = new Font("Segoe UI", 11, FontStyle.Bold)
@@ -88,9 +88,9 @@ internal sealed class MainForm : Form
     private static void ConfigureList(ListView list, Point location)
     {
         list.Location = location;
-        list.Columns.Add("Navn");
-        list.Columns.Add("Leverandør");
-        list.Columns.Add("Sprog");
+        list.Columns.Add(Strings.ColumnName);
+        list.Columns.Add(Strings.ColumnVendor);
+        list.Columns.Add(Strings.ColumnLanguage);
     }
 
     private void WireEvents()
@@ -159,7 +159,7 @@ internal sealed class MainForm : Form
         SetEqualColumnWidths(leftList);
         SetEqualColumnWidths(rightList);
         UpdateActionButton();
-        Log($"Opdateret. Ikke i Thorium: {leftList.Items.Count} | I Thorium: {rightList.Items.Count}");
+        Log(Strings.Refreshed(leftList.Items.Count, rightList.Items.Count));
     }
 
     private static Stream? OpenEmbeddedAsset(string fileName)
@@ -203,7 +203,7 @@ internal sealed class MainForm : Form
             }
             catch (Exception error)
             {
-                Log($"FEJL ({row.Voice.TokenName}): {error.Message}");
+                Log(Strings.Error(row.Voice.TokenName, error.Message));
             }
         }
 
@@ -212,8 +212,8 @@ internal sealed class MainForm : Form
         {
             MessageBox.Show(
                 source == leftList
-                    ? "Stemmen er tilføjet til Thorium. Genstart Thorium for at bruge den nye stemme."
-                    : "Stemmen er fjernet fra Thorium. Genstart Thorium for at bruge ændringen.",
+                    ? Strings.VoiceAdded
+                    : Strings.VoiceRemoved,
                 "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
@@ -229,12 +229,12 @@ internal sealed class MainForm : Form
         }
         else if (leftChecked > 0)
         {
-            actionButton.Text = "Flyt\n→";
+            actionButton.Text = Strings.MoveButton;
             actionButton.Enabled = true;
         }
         else if (rightChecked > 0)
         {
-            actionButton.Text = "←\nFjern";
+            actionButton.Text = Strings.RemoveButton;
             actionButton.Enabled = true;
         }
         else
@@ -246,7 +246,7 @@ internal sealed class MainForm : Form
 
     private void SetStatus()
     {
-        statusLabel.Text = "Tilføj eller fjern oplæsningsstemmer, så de kan bruges i Thorium Reader.";
+        statusLabel.Text = Strings.Status;
         statusLabel.ForeColor = SystemColors.ControlText;
     }
 
