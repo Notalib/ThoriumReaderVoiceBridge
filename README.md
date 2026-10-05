@@ -1,11 +1,8 @@
 # Thorium Voice Bridge
 
-Windows-værktøj der kopierer installerede SAPI 5-oplæsningsstemmer over i Windows'
-OneCore-stemmeregister, så de kan bruges i **Thorium Reader**. Stemmer der er tilføjet
-af værktøjet kan også fjernes igen.
+A Windows tool that copies installed SAPI 5 text-to-speech voices into the Windows OneCore voice registry, so they can be used in **Thorium Reader**. Voices added by the tool can also be removed again.
 
-Skrevet af Joshua Lindemann for Det Kgl. Biblioteks Nota-service.
-Brugerfladen er på dansk; kode, filnavne og dokumentation er på engelsk.
+Built for the Nota service at Det Kgl. Bibliotek (the Royal Danish Library). The original PowerShell version was written by Joshua Lindemann. The user interface is in Danish; code, file names and documentation are in English.
 
 ## How it works
 
