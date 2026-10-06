@@ -2,7 +2,7 @@
 
 A Windows tool that copies installed SAPI 5 text-to-speech voices into the Windows OneCore voice registry, so they can be used in **Thorium Reader**. Voices added by the tool can also be removed again.
 
-Built for the Nota service at Det Kgl. Bibliotek (the Royal Danish Library). The original PowerShell version was written by Joshua Lindemann. The user interface is in Danish; code, file names and documentation are in English.
+Built for the Nota service at Det Kgl. Bibliotek (the Royal Danish Library). The original PowerShell version was written by Joshua Lindemann. The user interface is in Danish on Danish Windows and in English otherwise; code, file names and documentation are in English.
 
 ## How it works
 

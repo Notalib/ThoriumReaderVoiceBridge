@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- The app now shows its interface in English when Windows is not set to Danish.
+
 ### Changed
 
 - The native WinForms UI now shows the KB icon in the top-left header and the KB logo on the right, matching the previous PowerShell UI.

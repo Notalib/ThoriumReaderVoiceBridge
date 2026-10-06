@@ -33,11 +33,11 @@ internal sealed class WindowsVoiceRegistry : IVoiceRegistry, IDisposable
     public void SetVoice(VoiceRegistryHive hive, VoiceToken voice)
     {
         using var root = baseKey.CreateSubKey(PathFor(hive), writable: true)
-            ?? throw new InvalidOperationException("Kunne ikke åbne stemmeregisteret.");
+            ?? throw new InvalidOperationException(Strings.RegistryOpenFailed);
         using var token = root.CreateSubKey(voice.TokenName, writable: true)
-            ?? throw new InvalidOperationException("Kunne ikke oprette stemmetokenet.");
+            ?? throw new InvalidOperationException(Strings.TokenCreateFailed);
         using var attributes = token.CreateSubKey("Attributes", writable: true)
-            ?? throw new InvalidOperationException("Kunne ikke oprette stemmens attributter.");
+            ?? throw new InvalidOperationException(Strings.AttributesCreateFailed);
 
         token.SetValue(string.Empty, voice.DisplayName, RegistryValueKind.String);
         token.SetValue(voice.LanguageHex, voice.DisplayName, RegistryValueKind.String);

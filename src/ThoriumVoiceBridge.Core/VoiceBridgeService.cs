@@ -19,16 +19,16 @@ public sealed class VoiceBridgeService
     public VoiceOperationResult InstallVoice(string tokenName)
     {
         var source = registry.GetVoice(VoiceRegistryHive.Sapi, tokenName)
-            ?? throw new InvalidOperationException($"SAPI token findes ikke: {tokenName}");
+            ?? throw new InvalidOperationException(Strings.SapiTokenMissing(tokenName));
 
         if (source.IsMicrosoft)
         {
-            return VoiceOperationResult.Skipped("Microsoft-stemmer kan ikke flyttes.");
+            return VoiceOperationResult.Skipped(Strings.MicrosoftVoiceSkipped);
         }
 
         if (registry.GetVoice(VoiceRegistryHive.OneCore, tokenName) is not null)
         {
-            return VoiceOperationResult.Skipped("Stemmen findes allerede i Thorium.");
+            return VoiceOperationResult.Skipped(Strings.AlreadyInThorium);
         }
 
         var bridged = new VoiceToken(
@@ -49,16 +49,16 @@ public sealed class VoiceBridgeService
     public VoiceOperationResult RemoveVoice(string tokenName)
     {
         var voice = registry.GetVoice(VoiceRegistryHive.OneCore, tokenName)
-            ?? throw new InvalidOperationException($"OneCore-token findes ikke: {tokenName}");
+            ?? throw new InvalidOperationException(Strings.OneCoreTokenMissing(tokenName));
 
         if (!voice.IsBridged)
         {
-            return VoiceOperationResult.Skipped("Native/ukendte OneCore-stemmer kan ikke fjernes.");
+            return VoiceOperationResult.Skipped(Strings.CannotRemoveNative);
         }
 
         return registry.DeleteVoice(VoiceRegistryHive.OneCore, tokenName)
             ? VoiceOperationResult.Completed(voice)
-            : VoiceOperationResult.Failed("Stemmen kunne ikke fjernes fra Thorium.");
+            : VoiceOperationResult.Failed(Strings.RemoveFailed);
     }
 
     public static string? NormalizeLanguage(string? language)
@@ -87,58 +87,58 @@ public sealed class VoiceBridgeService
         var languageHex = NormalizeLanguage(language);
         return languageHex?.ToUpperInvariant() switch
         {
-            "0406" => "Dansk (DA)",
-            "041D" => "Svensk (SV)",
-            "0414" => "Norsk Bokmål (NO)",
-            "0814" => "Norsk Nynorsk (NO)",
-            "040B" => "Finsk (FI)",
-            "040F" => "Islandsk (IS)",
-            "0409" => "Engelsk (US)",
-            "0809" => "Engelsk (UK)",
-            "0C09" => "Engelsk (AU)",
-            "1009" => "Engelsk (CA)",
-            "1409" => "Engelsk (NZ)",
-            "1809" => "Engelsk (IE)",
-            "0407" => "Tysk (DE)",
-            "0807" => "Tysk (CH)",
-            "0C07" => "Tysk (AT)",
-            "040C" => "Fransk (FR)",
-            "080C" => "Fransk (BE)",
-            "0C0C" => "Fransk (CA)",
-            "100C" => "Fransk (CH)",
-            "040A" => "Spansk (ES)",
-            "080A" => "Spansk (MX)",
-            "0C0A" => "Spansk (ES - modern)",
-            "0416" => "Portugisisk (BR)",
-            "0816" => "Portugisisk (PT)",
-            "0410" => "Italiensk (IT)",
-            "0810" => "Italiensk (CH)",
-            "0413" => "Hollandsk (NL)",
-            "0813" => "Hollandsk (BE)",
-            "0405" => "Tjekkisk (CS)",
-            "0415" => "Polsk (PL)",
-            "0418" => "Rumænsk (RO)",
-            "0419" => "Russisk (RU)",
-            "0424" => "Slovensk (SL)",
-            "041B" => "Slovakisk (SK)",
-            "040E" => "Ungarsk (HU)",
-            "041A" => "Kroatisk (HR)",
-            "0422" => "Ukrainsk (UK)",
-            "0425" => "Estisk (ET)",
-            "0426" => "Lettisk (LV)",
-            "0427" => "Litauisk (LT)",
-            "0411" => "Japansk (JA)",
-            "0412" => "Koreansk (KO)",
-            "0804" => "Kinesisk (CN)",
-            "0404" => "Kinesisk (TW)",
-            "0C04" => "Kinesisk (HK)",
-            "1004" => "Kinesisk (SG)",
-            "041E" => "Thai (TH)",
-            "042A" => "Vietnamesisk (VI)",
-            "0401" => "Arabisk (SA)",
-            "040D" => "Hebræisk (HE)",
-            "0429" => "Persisk (FA)",
-            "041F" => "Tyrkisk (TR)",
+            "0406" => Strings.Pick("Dansk (DA)", "Danish (DA)"),
+            "041D" => Strings.Pick("Svensk (SV)", "Swedish (SV)"),
+            "0414" => Strings.Pick("Norsk Bokmål (NO)", "Norwegian Bokmål (NO)"),
+            "0814" => Strings.Pick("Norsk Nynorsk (NO)", "Norwegian Nynorsk (NO)"),
+            "040B" => Strings.Pick("Finsk (FI)", "Finnish (FI)"),
+            "040F" => Strings.Pick("Islandsk (IS)", "Icelandic (IS)"),
+            "0409" => Strings.Pick("Engelsk (US)", "English (US)"),
+            "0809" => Strings.Pick("Engelsk (UK)", "English (UK)"),
+            "0C09" => Strings.Pick("Engelsk (AU)", "English (AU)"),
+            "1009" => Strings.Pick("Engelsk (CA)", "English (CA)"),
+            "1409" => Strings.Pick("Engelsk (NZ)", "English (NZ)"),
+            "1809" => Strings.Pick("Engelsk (IE)", "English (IE)"),
+            "0407" => Strings.Pick("Tysk (DE)", "German (DE)"),
+            "0807" => Strings.Pick("Tysk (CH)", "German (CH)"),
+            "0C07" => Strings.Pick("Tysk (AT)", "German (AT)"),
+            "040C" => Strings.Pick("Fransk (FR)", "French (FR)"),
+            "080C" => Strings.Pick("Fransk (BE)", "French (BE)"),
+            "0C0C" => Strings.Pick("Fransk (CA)", "French (CA)"),
+            "100C" => Strings.Pick("Fransk (CH)", "French (CH)"),
+            "040A" => Strings.Pick("Spansk (ES)", "Spanish (ES)"),
+            "080A" => Strings.Pick("Spansk (MX)", "Spanish (MX)"),
+            "0C0A" => Strings.Pick("Spansk (ES - modern)", "Spanish (ES - modern)"),
+            "0416" => Strings.Pick("Portugisisk (BR)", "Portuguese (BR)"),
+            "0816" => Strings.Pick("Portugisisk (PT)", "Portuguese (PT)"),
+            "0410" => Strings.Pick("Italiensk (IT)", "Italian (IT)"),
+            "0810" => Strings.Pick("Italiensk (CH)", "Italian (CH)"),
+            "0413" => Strings.Pick("Hollandsk (NL)", "Dutch (NL)"),
+            "0813" => Strings.Pick("Hollandsk (BE)", "Dutch (BE)"),
+            "0405" => Strings.Pick("Tjekkisk (CS)", "Czech (CS)"),
+            "0415" => Strings.Pick("Polsk (PL)", "Polish (PL)"),
+            "0418" => Strings.Pick("Rumænsk (RO)", "Romanian (RO)"),
+            "0419" => Strings.Pick("Russisk (RU)", "Russian (RU)"),
+            "0424" => Strings.Pick("Slovensk (SL)", "Slovenian (SL)"),
+            "041B" => Strings.Pick("Slovakisk (SK)", "Slovak (SK)"),
+            "040E" => Strings.Pick("Ungarsk (HU)", "Hungarian (HU)"),
+            "041A" => Strings.Pick("Kroatisk (HR)", "Croatian (HR)"),
+            "0422" => Strings.Pick("Ukrainsk (UK)", "Ukrainian (UK)"),
+            "0425" => Strings.Pick("Estisk (ET)", "Estonian (ET)"),
+            "0426" => Strings.Pick("Lettisk (LV)", "Latvian (LV)"),
+            "0427" => Strings.Pick("Litauisk (LT)", "Lithuanian (LT)"),
+            "0411" => Strings.Pick("Japansk (JA)", "Japanese (JA)"),
+            "0412" => Strings.Pick("Koreansk (KO)", "Korean (KO)"),
+            "0804" => Strings.Pick("Kinesisk (CN)", "Chinese (CN)"),
+            "0404" => Strings.Pick("Kinesisk (TW)", "Chinese (TW)"),
+            "0C04" => Strings.Pick("Kinesisk (HK)", "Chinese (HK)"),
+            "1004" => Strings.Pick("Kinesisk (SG)", "Chinese (SG)"),
+            "041E" => Strings.Pick("Thai (TH)", "Thai (TH)"),
+            "042A" => Strings.Pick("Vietnamesisk (VI)", "Vietnamese (VI)"),
+            "0401" => Strings.Pick("Arabisk (SA)", "Arabic (SA)"),
+            "040D" => Strings.Pick("Hebræisk (HE)", "Hebrew (HE)"),
+            "0429" => Strings.Pick("Persisk (FA)", "Persian (FA)"),
+            "041F" => Strings.Pick("Tyrkisk (TR)", "Turkish (TR)"),
             _ => languageHex ?? string.Empty
         };
     }
@@ -148,7 +148,7 @@ public sealed class VoiceBridgeService
 
     public static string MakeDisplayName(string? name, string? vendor)
     {
-        var cleanName = string.IsNullOrWhiteSpace(name) ? "Ukendt" : name.Trim();
+        var cleanName = string.IsNullOrWhiteSpace(name) ? Strings.UnknownVoice : name.Trim();
         var cleanVendor = vendor?.Trim();
         return string.IsNullOrWhiteSpace(cleanVendor) ? cleanName : $"{cleanName} ({cleanVendor})";
     }
